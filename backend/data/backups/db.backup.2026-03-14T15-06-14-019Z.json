@@ -516,11 +516,11 @@
       "sede_id": "norte",
       "fecha": "2026-03-25",
       "hora": "10:00",
-      "estado": "confirmada",
+      "estado": "cancelada",
       "reagendamientos": 0,
       "notas": "",
       "diagnostico": null,
-      "motivo_cancelacion": null
+      "motivo_cancelacion": "z"
     },
     {
       "id": "2",
@@ -827,6 +827,40 @@
       "notas": "",
       "diagnostico": null,
       "motivo_cancelacion": null
+    },
+    {
+      "id": "32bbd655-63e8-4ca1-8d98-532d4d0f1b01",
+      "user_id": "1",
+      "especialidad_id": "medicina-general",
+      "especialidad_nombre": "Medicina General",
+      "medico": "Dr. Carlos Mendoza",
+      "medico_id": "1",
+      "sede": "Sede Norte",
+      "sede_id": "norte",
+      "fecha": "2026-03-25",
+      "hora": "08:00",
+      "estado": "cancelada",
+      "reagendamientos": 0,
+      "notas": "",
+      "diagnostico": null,
+      "motivo_cancelacion": "z"
+    },
+    {
+      "id": "a1740227-fff4-4d2a-8fe0-168f43ce5abc",
+      "user_id": "1",
+      "especialidad_id": "medicina-general",
+      "especialidad_nombre": "Medicina General",
+      "medico": "Dr. Carlos Mendoza",
+      "medico_id": "1",
+      "sede": "Sede Norte",
+      "sede_id": "norte",
+      "fecha": "2026-03-24",
+      "hora": "10:00",
+      "estado": "confirmada",
+      "reagendamientos": 1,
+      "notas": "",
+      "diagnostico": null,
+      "motivo_cancelacion": null
     }
   ],
   "medications": [
@@ -882,7 +916,40 @@
       "instrucciones": "Completar todo el tratamiento. Tomar con o sin alimentos."
     }
   ],
-  "medication_taken_log": [],
+  "medication_taken_log": [
+    {
+      "id": "d6edc308-5867-4796-b23b-3de8577efde6",
+      "medication_id": "1",
+      "user_id": "1",
+      "horario": "08:00",
+      "taken_at": "2026-03-14T01:25:31.849Z",
+      "fecha": "2026-03-14"
+    },
+    {
+      "id": "73e23adb-bfe5-4e84-91ea-f8a88fccd6a8",
+      "medication_id": "1",
+      "user_id": "1",
+      "horario": "20:00",
+      "taken_at": "2026-03-14T01:25:33.840Z",
+      "fecha": "2026-03-14"
+    },
+    {
+      "id": "967843cc-643f-408a-94f5-12c50dee586e",
+      "medication_id": "2",
+      "user_id": "1",
+      "horario": "07:00",
+      "taken_at": "2026-03-14T15:02:54.009Z",
+      "fecha": "2026-03-14"
+    },
+    {
+      "id": "3fa91a1b-0311-4466-a43a-7d91bd594f72",
+      "medication_id": "3",
+      "user_id": "1",
+      "horario": "08:00",
+      "taken_at": "2026-03-14T15:04:15.800Z",
+      "fecha": "2026-03-14"
+    }
+  ],
   "medical_history": [
     {
       "id": "1",
