@@ -41,13 +41,41 @@ const getStore = () => {
   return store;
 };
 
+const restoreFromBackup = () => {
+  try {
+    if (!fs.existsSync(BACKUP_DIR)) return null;
+    const files = fs.readdirSync(BACKUP_DIR)
+      .filter(f => f.startsWith('db.backup'))
+      .sort();
+    if (!files.length) return null;
+    const latest = path.join(BACKUP_DIR, files[files.length - 1]);
+    return JSON.parse(fs.readFileSync(latest, 'utf8'));
+  } catch {
+    return null;
+  }
+};
+
 const initDB = async () => {
   if (fs.existsSync(DB_PATH)) {
-    store = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-    // Garantizar colecciones nuevas en bases de datos antiguas
-    if (!store.renewal_requests) store.renewal_requests = [];
-    if (!store.medication_taken_log) store.medication_taken_log = [];
-    console.log('Base de datos cargada');
+    try {
+      store = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+      // Garantizar colecciones nuevas en bases de datos antiguas
+      if (!store.renewal_requests) store.renewal_requests = [];
+      if (!store.medication_taken_log) store.medication_taken_log = [];
+      console.log('Base de datos cargada');
+    } catch (err) {
+      console.error('[DB] db.json corrupto, restaurando desde backup más reciente...');
+      const restored = restoreFromBackup();
+      if (restored) {
+        store = restored;
+        save();
+        console.log('[DB] Base de datos restaurada desde backup');
+      } else {
+        console.warn('[DB] Sin backup disponible, inicializando con datos de prueba');
+        store = buildSeedData();
+        save();
+      }
+    }
   } else {
     store = buildSeedData();
     save();
