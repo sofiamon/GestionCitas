@@ -1,7 +1,10 @@
 export const ROUTES = {
+  LANDING: '/',
   LOGIN: '/login',
   REGISTER: '/register',
   RECOVER_PASSWORD: '/recover-password',
+  TERMS: '/terminos',
+  PRIVACY: '/privacidad',
   DASHBOARD: '/dashboard',
   APPOINTMENTS: '/appointments',
   NEW_APPOINTMENT: '/appointments/new',

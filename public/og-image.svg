@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <!-- Decorative blobs -->
+    <radialGradient id="blob1" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob2" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#67E8F9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative blobs -->
+  <ellipse cx="200" cy="150" rx="300" ry="280" fill="url(#blob1)"/>
+  <ellipse cx="1050" cy="500" rx="260" ry="240" fill="url(#blob2)"/>
+
+  <!-- Heart-pulse icon container -->
+  <rect x="536" y="148" width="128" height="128" rx="32" fill="rgba(255,255,255,0.15)"/>
+
+  <!-- Heart shape (path) -->
+  <path
+    d="M600 236
+       c-1-1-30-22-30-44
+       a20 20 0 0 1 30-17
+       a20 20 0 0 1 30 17
+       c0 22-29 43-30 44z"
+    fill="white"
+    opacity="0.9"
+  />
+
+  <!-- Pulse line through heart -->
+  <polyline
+    points="562,212 576,212 583,198 591,226 598,206 606,220 613,212 638,212"
+    fill="none"
+    stroke="white"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.85"
+  />
+
+  <!-- EPS main title -->
+  <text
+    x="600"
+    y="350"
+    font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="128"
+    font-weight="800"
+    fill="white"
+    text-anchor="middle"
+    letter-spacing="-2"
+  >EPS</text>
+
+  <!-- Subtitle -->
+  <text
+    x="600"
+    y="430"
+    font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="44"
+    font-weight="400"
+    fill="rgba(255,255,255,0.85)"
+    text-anchor="middle"
+    letter-spacing="1"
+  >Portal del Afiliado</text>
+
+  <!-- Tagline -->
+  <text
+    x="600"
+    y="490"
+    font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="24"
+    font-weight="300"
+    fill="rgba(255,255,255,0.6)"
+    text-anchor="middle"
+    letter-spacing="0.5"
+  >Gestión de Salud Digital · Colombia</text>
+</svg>

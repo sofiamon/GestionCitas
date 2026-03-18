@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -14,11 +14,16 @@ import MedicalHistoryPage from './pages/MedicalHistoryPage';
 import MedicationsPage from './pages/MedicationsPage';
 import ProfilePage from './pages/ProfilePage';
 import HelpPage from './pages/HelpPage';
+import NotFoundPage from './pages/NotFoundPage';
 import MedicoDashboardPage from './pages/medico/MedicoDashboardPage';
 import MedicoAppointmentsPage from './pages/medico/MedicoAppointmentsPage';
 import MedicoRenewalsPage from './pages/medico/MedicoRenewalsPage';
 import { PageSpinner } from './components/ui/Spinner';
 import { ROUTES } from './utils/constants';
+
+const LandingPage = React.lazy(() => import('./pages/LandingPage'));
+const TermsPage   = React.lazy(() => import('./pages/TermsPage'));
+const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage'));
 
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -87,9 +92,11 @@ const AppRoutes = () => {
         <Route path={ROUTES.HELP} element={<HelpPage />} />
       </Route>
 
-      {/* Default redirect */}
-      <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
-      <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
+      {/* Landing, legal & fallback */}
+      <Route path={ROUTES.LANDING}  element={<Suspense fallback={<PageSpinner />}><LandingPage /></Suspense>} />
+      <Route path={ROUTES.TERMS}    element={<Suspense fallback={<PageSpinner />}><TermsPage /></Suspense>} />
+      <Route path={ROUTES.PRIVACY}  element={<Suspense fallback={<PageSpinner />}><PrivacyPage /></Suspense>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
