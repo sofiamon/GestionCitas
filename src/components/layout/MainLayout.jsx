@@ -83,7 +83,7 @@ const MainLayout = () => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex h-screen bg-gray-50 transition-colors duration-300">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
@@ -103,7 +103,7 @@ const MainLayout = () => {
                 </Link>
                 {breadcrumbs.map((crumb, index) => (
                   <React.Fragment key={crumb.path}>
-                    <ChevronRight size={14} className="text-gray-300" />
+                    <ChevronRight size={14} className="text-gray-400" />
                     {index === breadcrumbs.length - 1 ? (
                       <span className="text-gray-700 font-medium">{crumb.label}</span>
                     ) : (

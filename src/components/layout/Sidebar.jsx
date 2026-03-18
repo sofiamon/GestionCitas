@@ -50,6 +50,29 @@ const Sidebar = ({ isOpen, onClose }) => {
     return name?.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() || 'U';
   };
 
+  // Light / dark token sets
+  const t = isDark ? {
+    text:         'text-white',
+    subtext:      'text-purple-200',
+    muted:        'text-purple-300',
+    divider:      'border-white/10',
+    closeBtn:     'hover:bg-white/10 text-white',
+    navActive:    'bg-white/15 text-white shadow-lg shadow-black/10',
+    navInactive:  'text-purple-200 hover:bg-white/10 hover:text-white',
+    bottomBorder: 'border-white/10',
+    actionBtn:    'text-purple-200 hover:bg-white/10 hover:text-white',
+  } : {
+    text:         'text-gray-800',
+    subtext:      'text-primary-600',
+    muted:        'text-gray-500',
+    divider:      'border-gray-200',
+    closeBtn:     'hover:bg-gray-100 text-gray-500',
+    navActive:    'bg-primary-50 text-primary-700 font-semibold',
+    navInactive:  'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+    bottomBorder: 'border-gray-200',
+    actionBtn:    'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -62,14 +85,14 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full gradient-sidebar text-white z-50 transition-transform duration-300 w-[280px] flex flex-col ${
+        className={`fixed top-0 left-0 h-full gradient-sidebar z-50 transition-transform duration-300 w-[280px] flex flex-col ${t.text} ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 lg:static lg:z-auto`}
       >
         {/* Close button (mobile) */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 transition-colors lg:hidden cursor-pointer"
+          className={`absolute top-4 right-4 p-1.5 rounded-lg transition-colors lg:hidden cursor-pointer ${t.closeBtn}`}
         >
           <X size={20} />
         </button>
@@ -81,8 +104,8 @@ const Sidebar = ({ isOpen, onClose }) => {
               <HeartPulse size={22} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight">EPS</h1>
-              <p className="text-xs text-purple-200 -mt-0.5">{portalLabel}</p>
+              <h1 className={`text-lg font-bold tracking-tight ${t.text}`}>EPS</h1>
+              <p className={`text-xs -mt-0.5 ${t.subtext}`}>{portalLabel}</p>
             </div>
           </div>
         </div>
@@ -91,7 +114,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <nav className="flex-1 px-3 py-2 overflow-y-auto">
           {menuItems.map((item, index) => {
             if (item.divider) {
-              return <hr key={index} className="my-3 border-white/10" />;
+              return <hr key={index} className={`my-3 ${t.divider}`} />;
             }
 
             const Icon = item.icon;
@@ -102,9 +125,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 onClick={onClose}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-2.5 rounded-xl mb-1 text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-white/15 text-white shadow-lg shadow-black/10'
-                      : 'text-purple-200 hover:bg-white/10 hover:text-white'
+                    isActive ? t.navActive : t.navInactive
                   }`
                 }
               >
@@ -116,21 +137,21 @@ const Sidebar = ({ isOpen, onClose }) => {
         </nav>
 
         {/* User section */}
-        <div className="p-4 border-t border-white/10">
+        <div className={`p-4 border-t ${t.bottomBorder}`}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-sm font-bold">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-sm font-bold text-white">
               {getInitials(user?.nombreCompleto)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.nombreCompleto || 'Usuario'}</p>
-              <p className="text-xs text-purple-300 truncate">
+              <p className={`text-sm font-medium truncate ${t.text}`}>{user?.nombreCompleto || 'Usuario'}</p>
+              <p className={`text-xs truncate ${t.muted}`}>
                 {user?.role === 'medico' ? 'Médico' : `CC ${user?.cedula}`}
               </p>
             </div>
           </div>
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-2 w-full px-4 py-2 rounded-xl text-sm text-purple-200 hover:bg-white/10 hover:text-white transition-all cursor-pointer mb-1"
+            className={`flex items-center gap-2 w-full px-4 py-2 rounded-xl text-sm transition-all cursor-pointer mb-1 ${t.actionBtn}`}
             aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
           >
             {isDark ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} />}
@@ -138,7 +159,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </button>
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="flex items-center gap-2 w-full px-4 py-2 rounded-xl text-sm text-purple-200 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+            className={`flex items-center gap-2 w-full px-4 py-2 rounded-xl text-sm transition-all cursor-pointer ${t.actionBtn}`}
           >
             <LogOut size={18} />
             <span>Cerrar Sesión</span>
