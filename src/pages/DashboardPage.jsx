@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAppointments } from '../context/AppointmentContext';
 import { useToast } from '../context/ToastContext';
+import { useNotifications } from '../context/NotificationContext';
 import Skeleton from '../components/ui/Skeleton';
 import EmptyState from '../components/ui/EmptyState';
 import { ROUTES } from '../utils/constants';
@@ -20,6 +21,7 @@ const DashboardPage = () => {
   const { user } = useAuth();
   const { appointments, fetchAppointments, isLoading } = useAppointments();
   const { showToast } = useToast();
+  const { addNotification } = useNotifications();
   const [takenMeds, setTakenMeds] = useState({});
   const [medications, setMedications] = useState([]);
   const [medsLoading, setMedsLoading] = useState(true);
@@ -57,6 +59,12 @@ const DashboardPage = () => {
       await api.markMedicationTaken(medId, horario);
       setTakenMeds(prev => ({ ...prev, [`${medId}-${horario}`]: true }));
       showToast({ type: 'success', title: '✓ Dosis registrada', message: 'Dosis registrada correctamente' });
+      const med = medications.find(m => m.id === medId);
+      addNotification({
+        title: 'Dosis registrada',
+        message: `${med?.nombre || 'Medicamento'} · dosis de las ${horario} marcada como tomada`,
+        type: 'success',
+      });
     } catch {
       showToast({ type: 'error', title: 'Error', message: 'No se pudo registrar la dosis. Intenta de nuevo.' });
     }

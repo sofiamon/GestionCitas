@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Skeleton from '../components/ui/Skeleton';
 import { useToast } from '../context/ToastContext';
+import { useNotifications } from '../context/NotificationContext';
 import { api } from '../services/api';
 import usePagination from '../hooks/usePagination';
 
@@ -39,6 +40,7 @@ const MedicationsPage = () => {
   const [renewLoading, setRenewLoading] = useState(false);
   const [infoModal, setInfoModal] = useState(null);
   const { showToast } = useToast();
+  const { addNotification } = useNotifications();
 
   const pagination = usePagination(medications, 6);
 
@@ -102,6 +104,11 @@ const MedicationsPage = () => {
     try {
       await api.requestRenewal(renewalModal.id);
       showToast({ type: 'success', title: 'Solicitud enviada', message: 'Tu solicitud de renovación ha sido enviada al médico para su aprobación' });
+      addNotification({
+        title: 'Solicitud de renovación enviada',
+        message: `La solicitud de renovación de ${renewalModal?.nombre || 'medicamento'} fue enviada al médico`,
+        type: 'info',
+      });
       setRenewalModal(null);
     } catch (err) {
       showToast({ type: 'error', title: 'Error', message: err.message });

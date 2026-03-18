@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useReducer, useCallback, useRef, useEffect } from 'react';
 import { api } from '../services/api';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { useNotifications } from './NotificationContext';
 
 const AppointmentContext = createContext(null);
 export { AppointmentContext };
@@ -38,6 +39,7 @@ const appointmentReducer = (state, action) => {
 export const AppointmentProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appointmentReducer, initialState);
   const [savedAppointments, setSavedAppointments] = useLocalStorage('eps_appointments', null);
+  const { addNotification } = useNotifications();
 
   const savedRef = useRef(savedAppointments);
   const appointmentsRef = useRef(state.appointments);
@@ -69,12 +71,17 @@ export const AppointmentProvider = ({ children }) => {
       dispatch({ type: 'ADD_APPOINTMENT', payload: newAppointment });
       const updated = [newAppointment, ...appointmentsRef.current];
       setSavedRef.current(updated);
+      addNotification({
+        title: 'Cita agendada',
+        message: `Tu cita${newAppointment.especialidad ? ` de ${newAppointment.especialidad}` : ''} ha sido agendada exitosamente`,
+        type: 'success',
+      });
       return newAppointment;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error.message });
       throw error;
     }
-  }, [dispatch]);
+  }, [dispatch, addNotification]);
 
   const cancelAppointment = useCallback(async (id, motivo) => {
     dispatch({ type: 'SET_LOADING' });
@@ -86,11 +93,16 @@ export const AppointmentProvider = ({ children }) => {
         a.id === id ? { ...a, ...update } : a
       );
       setSavedRef.current(updated);
+      addNotification({
+        title: 'Cita cancelada',
+        message: motivo ? `Cita cancelada: ${motivo}` : 'Tu cita ha sido cancelada',
+        type: 'info',
+      });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error.message });
       throw error;
     }
-  }, [dispatch]);
+  }, [dispatch, addNotification]);
 
   const rescheduleAppointment = useCallback(async (id, newDate, newTime) => {
     dispatch({ type: 'SET_LOADING' });
@@ -108,11 +120,16 @@ export const AppointmentProvider = ({ children }) => {
         a.id === id ? { ...a, ...update } : a
       );
       setSavedRef.current(updated);
+      addNotification({
+        title: 'Cita reagendada',
+        message: `Tu cita fue reagendada para el ${newDate} a las ${newTime}`,
+        type: 'success',
+      });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error.message });
       throw error;
     }
-  }, [dispatch]);
+  }, [dispatch, addNotification]);
 
   return (
     <AppointmentContext.Provider

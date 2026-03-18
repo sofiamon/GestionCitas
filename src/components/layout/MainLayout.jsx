@@ -18,6 +18,9 @@ const breadcrumbMap = {
   [ROUTES.MEDICATIONS]: 'Medicamentos',
   [ROUTES.PROFILE]: 'Mi Perfil',
   [ROUTES.HELP]: 'Ayuda',
+  [ROUTES.MEDICO_DASHBOARD]: 'Inicio',
+  [ROUTES.MEDICO_APPOINTMENTS]: 'Mis Consultas',
+  [ROUTES.MEDICO_RENEWALS]: 'Renovaciones',
 };
 
 const COUNTDOWN_SECONDS = Math.round((SESSION_TIMEOUT_MS - SESSION_WARNING_MS) / 1000);
@@ -28,9 +31,9 @@ const MainLayout = () => {
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const currentPath = location.pathname;
-  const isDashboard = currentPath === ROUTES.DASHBOARD;
+  const isDashboard = currentPath === ROUTES.DASHBOARD || currentPath === ROUTES.MEDICO_DASHBOARD;
 
   const handleTimeout = useCallback(() => {
     setShowWarning(false);
@@ -95,7 +98,7 @@ const MainLayout = () => {
             <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-0">
               <nav className="flex items-center gap-1.5 text-sm">
                 <Link
-                  to={ROUTES.DASHBOARD}
+                  to={user?.role === 'medico' ? ROUTES.MEDICO_DASHBOARD : ROUTES.DASHBOARD}
                   className="text-gray-400 hover:text-primary-500 transition-colors flex items-center gap-1"
                 >
                   <Home size={14} />

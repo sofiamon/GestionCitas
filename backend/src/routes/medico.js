@@ -3,6 +3,7 @@ const { getStore, save } = require('../config/db');
 const { v4: uuidv4 } = require('uuid');
 const auth = require('../middleware/auth');
 const requireRole = require('../middleware/requireRole');
+const { sendConsultaCompletada, sendRenewalResult } = require('../config/mailer');
 
 router.use(auth);
 router.use(requireRole('medico'));
@@ -115,6 +116,22 @@ router.patch('/appointments/:id/complete', (req, res, next) => {
     });
 
     save();
+
+    // Notificar al paciente (fire-and-forget)
+    const patient = store.users.find(u => u.id === apt.user_id);
+    if (patient?.email) {
+      sendConsultaCompletada({
+        to: patient.email,
+        nombre: patient.nombre || patient.nombreCompleto || 'Paciente',
+        appointment: {
+          especialidad: apt.especialidad_nombre,
+          medico: doctor?.nombre || apt.medico,
+          fecha: apt.fecha,
+          diagnostico: diagnostico.trim(),
+        },
+      }).catch(err => console.error('[Mailer] Error al enviar email de consulta completada:', err.message));
+    }
+
     res.json({ success: true, appointment: apt });
   } catch (err) { next(err); }
 });
@@ -254,6 +271,19 @@ router.patch('/renewals/:id', (req, res, next) => {
     }
 
     save();
+
+    // Notificar al paciente (fire-and-forget)
+    const patient = store.users.find(u => u.id === renewal.user_id);
+    if (patient?.email) {
+      sendRenewalResult({
+        to: patient.email,
+        nombre: patient.nombre || patient.nombreCompleto || 'Paciente',
+        medicamento: med.nombre,
+        aprobada: action === 'approve',
+        notaMedico: nota ? nota.trim() : '',
+      }).catch(err => console.error('[Mailer] Error al enviar email de renovación:', err.message));
+    }
+
     res.json({ success: true, renewal });
   } catch (err) { next(err); }
 });

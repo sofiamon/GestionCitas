@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { AppointmentProvider } from './context/AppointmentContext';
+import { NotificationProvider } from './context/NotificationContext';
 import { ThemeProvider } from './context/ThemeContext';
 import MainLayout from './components/layout/MainLayout';
 import AuthPage from './pages/AuthPage';
@@ -99,7 +100,9 @@ const App = () => {
       <ThemeProvider>
         <ToastProvider>
           <AuthProvider>
-            <AppRoutes />
+            <NotificationProvider>
+              <AppRoutes />
+            </NotificationProvider>
           </AuthProvider>
         </ToastProvider>
       </ThemeProvider>

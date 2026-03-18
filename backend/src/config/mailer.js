@@ -123,4 +123,116 @@ const sendAppointmentConfirmation = async ({ to, nombre, appointment }) => {
   return info;
 };
 
-module.exports = { sendRecoveryEmail, sendAppointmentConfirmation, isConfigured };
+/**
+ * Envía un email al paciente cuando el médico completa su consulta.
+ */
+const sendConsultaCompletada = async ({ to, nombre, appointment }) => {
+  if (!transporter) {
+    const testAccount = await nodemailer.createTestAccount();
+    transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: { user: testAccount.user, pass: testAccount.pass },
+    });
+  }
+
+  const from = process.env.EMAIL_FROM || '"EPS Portal" <noreply@eps.com>';
+
+  const info = await transporter.sendMail({
+    from,
+    to,
+    subject: 'Resumen de tu consulta médica - EPS',
+    text: `Hola ${nombre},\n\nTu consulta ha sido completada.\n\nDetalles:\n- Especialidad: ${appointment.especialidad}\n- Médico: ${appointment.medico}\n- Fecha: ${appointment.fecha}\n\nDiagnóstico:\n${appointment.diagnostico}\n\nEPS Portal del Afiliado`,
+    html: `
+      <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <div style="background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%); border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px;">
+          <h1 style="color: white; margin: 0; font-size: 20px;">EPS — Portal del Afiliado</h1>
+        </div>
+        <h2 style="color: #1e293b; font-size: 18px;">📋 Resumen de tu consulta</h2>
+        <p style="color: #64748b;">Hola <strong>${nombre}</strong>, tu consulta médica ha sido completada.</p>
+        <div style="background: #F5F3FF; border: 1px solid #C4B5FD; border-radius: 12px; padding: 20px; margin: 20px 0;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="color: #64748b; padding: 6px 0; font-size: 14px;">Especialidad</td><td style="font-weight: 600; color: #1e293b; font-size: 14px;">${appointment.especialidad}</td></tr>
+            <tr><td style="color: #64748b; padding: 6px 0; font-size: 14px;">Médico</td><td style="font-weight: 600; color: #1e293b; font-size: 14px;">${appointment.medico}</td></tr>
+            <tr><td style="color: #64748b; padding: 6px 0; font-size: 14px;">Fecha</td><td style="font-weight: 600; color: #1e293b; font-size: 14px;">${appointment.fecha}</td></tr>
+          </table>
+        </div>
+        <div style="background: #ECFEFF; border: 1px solid #A5F3FC; border-radius: 12px; padding: 16px; margin: 20px 0;">
+          <p style="color: #64748b; font-size: 13px; margin: 0 0 6px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Diagnóstico</p>
+          <p style="color: #1e293b; font-size: 14px; margin: 0;">${appointment.diagnostico}</p>
+        </div>
+        <p style="color: #94a3b8; font-size: 13px;">Puedes consultar el detalle completo en tu historial médico del portal.</p>
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+        <p style="color: #cbd5e1; font-size: 12px; text-align: center;">EPS — Portal del Afiliado</p>
+      </div>
+    `,
+  });
+
+  if (!isConfigured) {
+    console.log(`[DEV] Email de consulta completada enviado. Preview: ${nodemailer.getTestMessageUrl(info)}`);
+  }
+
+  return info;
+};
+
+/**
+ * Envía un email al paciente con el resultado de su solicitud de renovación de medicamento.
+ */
+const sendRenewalResult = async ({ to, nombre, medicamento, aprobada, notaMedico }) => {
+  if (!transporter) {
+    const testAccount = await nodemailer.createTestAccount();
+    transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: { user: testAccount.user, pass: testAccount.pass },
+    });
+  }
+
+  const from = process.env.EMAIL_FROM || '"EPS Portal" <noreply@eps.com>';
+  const estado = aprobada ? 'aprobada' : 'rechazada';
+  const estadoTexto = aprobada ? '✅ Aprobada' : '❌ Rechazada';
+  const colorBg = aprobada ? '#F0FDF4' : '#FFF1F2';
+  const colorBorder = aprobada ? '#86EFAC' : '#FECDD3';
+  const colorText = aprobada ? '#166534' : '#9F1239';
+
+  const info = await transporter.sendMail({
+    from,
+    to,
+    subject: `Renovación de medicamento ${estado} - EPS`,
+    text: `Hola ${nombre},\n\nTu solicitud de renovación para el medicamento "${medicamento}" ha sido ${estado}.\n\n${notaMedico ? `Nota del médico: ${notaMedico}\n\n` : ''}EPS Portal del Afiliado`,
+    html: `
+      <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <div style="background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%); border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px;">
+          <h1 style="color: white; margin: 0; font-size: 20px;">EPS — Portal del Afiliado</h1>
+        </div>
+        <h2 style="color: #1e293b; font-size: 18px;">Resultado de renovación de medicamento</h2>
+        <p style="color: #64748b;">Hola <strong>${nombre}</strong>, tu solicitud de renovación ha sido procesada.</p>
+        <div style="background: #F5F3FF; border: 1px solid #C4B5FD; border-radius: 12px; padding: 20px; margin: 20px 0;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="color: #64748b; padding: 6px 0; font-size: 14px;">Medicamento</td><td style="font-weight: 600; color: #1e293b; font-size: 14px;">${medicamento}</td></tr>
+            <tr><td style="color: #64748b; padding: 6px 0; font-size: 14px;">Estado</td><td style="font-weight: 600; color: #1e293b; font-size: 14px;">${estadoTexto}</td></tr>
+          </table>
+        </div>
+        ${notaMedico ? `
+        <div style="background: ${colorBg}; border: 1px solid ${colorBorder}; border-radius: 12px; padding: 16px; margin: 20px 0;">
+          <p style="color: #64748b; font-size: 13px; margin: 0 0 6px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Nota del médico</p>
+          <p style="color: ${colorText}; font-size: 14px; margin: 0;">${notaMedico}</p>
+        </div>
+        ` : ''}
+        <p style="color: #94a3b8; font-size: 13px;">Puedes consultar el estado de tus medicamentos en el portal del afiliado.</p>
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+        <p style="color: #cbd5e1; font-size: 12px; text-align: center;">EPS — Portal del Afiliado</p>
+      </div>
+    `,
+  });
+
+  if (!isConfigured) {
+    console.log(`[DEV] Email de resultado de renovación enviado. Preview: ${nodemailer.getTestMessageUrl(info)}`);
+  }
+
+  return info;
+};
+
+module.exports = { sendRecoveryEmail, sendAppointmentConfirmation, sendConsultaCompletada, sendRenewalResult, isConfigured };

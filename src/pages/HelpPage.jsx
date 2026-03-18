@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
   HelpCircle, ChevronDown, ChevronUp, Phone, Mail,
-  MessageCircle, Calendar, Pill, FileText, User, Shield
+  MessageCircle, Calendar, Pill, FileText, User, Shield, RefreshCw
 } from 'lucide-react';
 import Card from '../components/ui/Card';
+import { useAuth } from '../context/AuthContext';
 
-const faqs = [
+const pacienteFaqs = [
   {
     category: 'Citas',
     icon: Calendar,
@@ -96,6 +97,81 @@ const faqs = [
   },
 ];
 
+const medicoFaqs = [
+  {
+    category: 'Consultas',
+    icon: Calendar,
+    color: 'text-primary-500',
+    bg: 'bg-primary-50',
+    items: [
+      {
+        question: '¿Cómo completo una consulta?',
+        answer: 'En "Mis Consultas", haz clic en la fila de la cita para expandirla y luego en "Completar Consulta". Se abre un formulario donde debes ingresar el diagnóstico (obligatorio), notas adicionales, recetas (una por línea) y exámenes ordenados (uno por línea). Haz clic en "Registrar" para guardar. La cita quedará en estado "Completada" y el paciente recibirá una notificación por correo.',
+      },
+      {
+        question: '¿Puedo ver el historial de un paciente?',
+        answer: 'Sí, pero solo de pacientes con los que tienes al menos una cita registrada. Al expandir cualquier cita en "Mis Consultas" verás los datos de contacto del paciente y el número de consultas previas completadas. Para ver el historial médico completo, medicamentos y todas las citas del paciente contigo, el sistema carga ese detalle automáticamente.',
+      },
+      {
+        question: '¿Qué pasa si un paciente cancela su cita?',
+        answer: 'Los pacientes gestionan sus propias cancelaciones desde su portal con al menos 24 horas de anticipación. No puedes cancelar citas de pacientes desde el portal médico. Si necesitas reagendar una cita por causas administrativas, comunícate directamente con la sede.',
+      },
+    ],
+  },
+  {
+    category: 'Prescripciones',
+    icon: Pill,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-50',
+    items: [
+      {
+        question: '¿Cómo prescribo un medicamento?',
+        answer: 'Expande una cita confirmada o completada en "Mis Consultas" y haz clic en "Prescribir Medicamento". Completa el nombre, dosis, presentación, frecuencia (ej: "Cada 8 horas"), horarios separados por coma (ej: "08:00, 16:00, 00:00"), duración en días e instrucciones opcionales. El medicamento queda disponible inmediatamente en el portal del paciente.',
+      },
+      {
+        question: '¿Cuál es la diferencia entre renovable y no renovable?',
+        answer: 'Los medicamentos marcados como renovables permiten al paciente solicitar una renovación desde su portal cuando le quedan 7 días o menos. Tú recibirás la solicitud en "Solicitudes de Renovación" para aprobarla o rechazarla. Los medicamentos no renovables no muestran ese botón al paciente; si necesitan continuar el tratamiento, deben agendar una nueva consulta.',
+      },
+    ],
+  },
+  {
+    category: 'Renovaciones',
+    icon: RefreshCw,
+    color: 'text-indigo-500',
+    bg: 'bg-indigo-50',
+    items: [
+      {
+        question: '¿Cómo apruebo una renovación?',
+        answer: 'Ve a "Solicitudes de Renovación". Las solicitudes pendientes aparecen con los datos del paciente y el medicamento. Puedes agregar una nota opcional y luego hacer clic en "Aprobar" o "Rechazar". El paciente recibe una notificación por correo con el resultado.',
+      },
+      {
+        question: '¿Qué pasa cuando rechazo una solicitud?',
+        answer: 'La solicitud cambia a estado "Rechazada" y la fecha de vencimiento del medicamento no se modifica. Si escribiste una nota, el paciente podrá verla. Si el paciente necesita continuar el tratamiento, deberá agendar una nueva consulta.',
+      },
+      {
+        question: '¿Cuánto se extiende el medicamento al aprobar?',
+        answer: 'Al aprobar, el sistema extiende el medicamento 30 días adicionales. Si la fecha de vencimiento actual aún no ha llegado, los 30 días se suman desde esa fecha. Si el medicamento ya está vencido, los 30 días se cuentan desde el día de hoy.',
+      },
+    ],
+  },
+  {
+    category: 'Cuenta',
+    icon: User,
+    color: 'text-secondary-500',
+    bg: 'bg-secondary-50',
+    items: [
+      {
+        question: '¿Cómo cambio mi contraseña?',
+        answer: 'En "Mi Perfil", en la sección de Seguridad, haz clic en "Cambiar Contraseña". Deberás ingresar tu contraseña actual y la nueva, que debe tener al menos 8 caracteres incluyendo mayúsculas, minúsculas, números y un carácter especial.',
+      },
+      {
+        question: '¿Puedo cambiar mi foto de perfil?',
+        answer: 'Sí. En "Mi Perfil", haz clic sobre tu foto o el ícono de edición para cargar una nueva imagen desde tu dispositivo.',
+      },
+    ],
+  },
+];
+
 const contactChannels = [
   {
     icon: Phone,
@@ -124,7 +200,10 @@ const contactChannels = [
 ];
 
 const HelpPage = () => {
+  const { user } = useAuth();
   const [openItems, setOpenItems] = useState({});
+
+  const faqs = user?.role === 'medico' ? medicoFaqs : pacienteFaqs;
 
   const toggle = (key) => {
     setOpenItems(prev => ({ ...prev, [key]: !prev[key] }));
