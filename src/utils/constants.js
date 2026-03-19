@@ -11,6 +11,7 @@ export const ROUTES = {
   MEDICAL_HISTORY: '/medical-history',
   MEDICATIONS: '/medications',
   AUTHORIZATIONS: '/authorizations',
+  CERTIFICATES: '/certificates',
   PROFILE: '/profile',
   HELP: '/help',
   MEDICO_DASHBOARD: '/medico/dashboard',

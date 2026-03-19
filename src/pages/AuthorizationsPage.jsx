@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileCheck, ClipboardCopy, Clock, AlertTriangle,
-  ChevronDown, ChevronUp, Calendar, MapPin, Stethoscope,
+  ChevronDown, ChevronUp, Calendar, MapPin, Stethoscope, Download,
 } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -10,8 +10,10 @@ import Skeleton from '../components/ui/Skeleton';
 import EmptyState from '../components/ui/EmptyState';
 import Pagination from '../components/ui/Pagination';
 import Button from '../components/ui/Button';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { api } from '../services/api';
+import { generateAuthorizationPDF } from '../utils/pdfGenerator';
 import usePagination from '../hooks/usePagination';
 import { formatDate } from '../utils/formatters';
 import { ROUTES } from '../utils/constants';
@@ -60,6 +62,7 @@ const estadoLabel = (estado) =>
 
 const AuthorizationCard = ({ auth, expanded, onToggle }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { showToast } = useToast();
 
   const handleCopy = (e) => {
@@ -148,6 +151,14 @@ const AuthorizationCard = ({ auth, expanded, onToggle }) => {
                     <ClipboardCopy size={14} />
                   </button>
                 </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  icon={<Download size={14} />}
+                  onClick={(e) => { e.stopPropagation(); generateAuthorizationPDF(user, auth); }}
+                >
+                  Descargar PDF
+                </Button>
                 {auth.fecha_vencimiento && (
                   <span className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
                     <Clock size={12} />

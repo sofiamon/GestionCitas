@@ -1,12 +1,17 @@
 import React from 'react';
-import { Calendar, Stethoscope, User, MapPin, Clock, CalendarClock } from 'lucide-react';
+import { Calendar, Stethoscope, User, MapPin, Clock, CalendarClock, Download } from 'lucide-react';
 import Card from '../../ui/Card';
 import Badge from '../../ui/Badge';
 import Button from '../../ui/Button';
+import { useAuth } from '../../../context/AuthContext';
+import { generateAppointmentConfirmation } from '../../../utils/pdfGenerator';
 import { STATE_VARIANTS, STATE_LABELS } from '../../../utils/constants';
 import { formatDateShort, formatTime } from '../../../utils/formatters';
 
 const AppointmentCard = ({ apt, onDetail, onReschedule, onCancel, canReschedule, canModify }) => {
+  const { user } = useAuth();
+  const isActive = apt.estado === 'confirmada' || apt.estado === 'pendiente';
+
   return (
     <Card hover className="group">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -42,6 +47,16 @@ const AppointmentCard = ({ apt, onDetail, onReschedule, onCancel, canReschedule,
           <Button variant="ghost" size="sm" onClick={() => onDetail(apt)}>
             Ver detalles
           </Button>
+          {isActive && (
+            <Button
+              variant="outline"
+              size="sm"
+              icon={<Download size={15} />}
+              onClick={() => generateAppointmentConfirmation(user, apt)}
+            >
+              Comprobante
+            </Button>
+          )}
           {canReschedule(apt) && (
             <Button variant="outline" size="sm" className="text-primary-600 border-primary-200 hover:bg-primary-50"
               icon={<CalendarClock size={15} />}

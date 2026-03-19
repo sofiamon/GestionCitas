@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Home, Calendar, CalendarPlus, FileText, Pill, User,
   HelpCircle, LogOut, HeartPulse, X, AlertTriangle, Sun, Moon,
-  RefreshCw, FileCheck
+  RefreshCw, FileCheck, Download
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -18,6 +18,7 @@ const pacienteMenu = [
   { icon: FileText, label: 'Historial Médico', path: ROUTES.MEDICAL_HISTORY },
   { icon: Pill, label: 'Medicamentos', path: ROUTES.MEDICATIONS },
   { icon: FileCheck, label: 'Autorizaciones', path: ROUTES.AUTHORIZATIONS },
+  { icon: Download, label: 'Certificados', path: ROUTES.CERTIFICATES },
   { icon: User, label: 'Mi Perfil', path: ROUTES.PROFILE },
   { divider: true },
   { icon: HelpCircle, label: 'Ayuda', path: ROUTES.HELP },

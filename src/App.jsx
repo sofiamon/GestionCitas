@@ -23,9 +23,10 @@ import MedicoAuthorizationsPage from './pages/medico/MedicoAuthorizationsPage';
 import { PageSpinner } from './components/ui/Spinner';
 import { ROUTES } from './utils/constants';
 
-const LandingPage = React.lazy(() => import('./pages/LandingPage'));
-const TermsPage   = React.lazy(() => import('./pages/TermsPage'));
-const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage'));
+const LandingPage      = React.lazy(() => import('./pages/LandingPage'));
+const TermsPage        = React.lazy(() => import('./pages/TermsPage'));
+const PrivacyPage      = React.lazy(() => import('./pages/PrivacyPage'));
+const CertificatesPage = React.lazy(() => import('./pages/CertificatesPage'));
 
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -76,6 +77,7 @@ const AppRoutes = () => {
         <Route path={ROUTES.MEDICAL_HISTORY} element={<MedicalHistoryPage />} />
         <Route path={ROUTES.MEDICATIONS} element={<MedicationsPage />} />
         <Route path={ROUTES.AUTHORIZATIONS} element={<AuthorizationsPage />} />
+        <Route path={ROUTES.CERTIFICATES} element={<Suspense fallback={<PageSpinner />}><CertificatesPage /></Suspense>} />
         <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTES.HELP} element={<HelpPage />} />
       </Route>

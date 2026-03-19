@@ -22,6 +22,7 @@ const breadcrumbMap = {
   [ROUTES.MEDICO_APPOINTMENTS]: 'Mis Consultas',
   [ROUTES.MEDICO_RENEWALS]: 'Renovaciones',
   [ROUTES.AUTHORIZATIONS]: 'Autorizaciones',
+  [ROUTES.CERTIFICATES]: 'Certificados',
   [ROUTES.MEDICO_AUTHORIZATIONS]: 'Autorizaciones',
 };
 

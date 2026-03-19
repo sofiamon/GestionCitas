@@ -1,18 +1,41 @@
 import React, { useRef, useState } from 'react';
-import { IdCard, Camera } from 'lucide-react';
+import { IdCard, Camera, FileDown, Download, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 import ProfileForm from '../components/features/profile/ProfileForm';
 import ChangePasswordForm from '../components/features/profile/ChangePasswordForm';
 import { formatDate, getInitials } from '../utils/formatters';
 import { api } from '../services/api';
+import { generateAffiliationCertificate, generateMedicalHistoryPDF } from '../utils/pdfGenerator';
 
 const ProfilePage = () => {
   const { user, updateUser } = useAuth();
   const { showToast } = useToast();
   const [uploadingPic, setUploadingPic] = useState(false);
+  const [downloadingHistory, setDownloadingHistory] = useState(false);
   const fileInputRef = useRef(null);
+
+  const handleDownloadCertificate = () => {
+    try {
+      generateAffiliationCertificate(user);
+    } catch (err) {
+      showToast({ type: 'error', title: 'Error', message: 'No se pudo generar el certificado' });
+    }
+  };
+
+  const handleDownloadHistory = async () => {
+    setDownloadingHistory(true);
+    try {
+      const history = await api.getMedicalHistory();
+      generateMedicalHistoryPDF(user, history);
+    } catch (err) {
+      showToast({ type: 'error', title: 'Error', message: 'No se pudo generar el historial' });
+    } finally {
+      setDownloadingHistory(false);
+    }
+  };
 
   /** Redimensiona y comprime la imagen a 200×200 JPEG al 80% de calidad */
   const compressImage = (dataUrl) =>
@@ -110,6 +133,40 @@ const ProfilePage = () => {
       <ProfileForm user={user} updateUser={updateUser} showToast={showToast} />
 
       <ChangePasswordForm showToast={showToast} />
+
+      {/* Documents */}
+      <Card>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0">
+            <FileDown size={18} className="text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100">Documentos</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Descarga tus documentos oficiales en PDF</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="outline"
+            icon={<Download size={16} />}
+            onClick={handleDownloadCertificate}
+            className="flex-1"
+          >
+            Certificado de Afiliación
+          </Button>
+
+          <Button
+            variant="outline"
+            icon={downloadingHistory ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+            onClick={handleDownloadHistory}
+            disabled={downloadingHistory}
+            className="flex-1"
+          >
+            {downloadingHistory ? 'Generando...' : 'Historial Médico'}
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 };
