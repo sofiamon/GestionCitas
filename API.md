@@ -41,6 +41,22 @@ Authorization: Bearer <token>
 | GET | /medico/patients/:userId | Sí | medico |
 | GET | /medico/renewals | Sí | medico |
 | PATCH | /medico/renewals/:id | Sí | medico |
+| GET | /admin/dashboard | Sí | admin |
+| GET | /admin/users | Sí | admin |
+| PATCH | /admin/users/:id/toggle-active | Sí | admin |
+| PATCH | /admin/users/:id/change-role | Sí | admin |
+| GET | /admin/doctors | Sí | admin |
+| POST | /admin/doctors | Sí | admin |
+| PUT | /admin/doctors/:id | Sí | admin |
+| DELETE | /admin/doctors/:id | Sí | admin |
+| GET | /admin/locations | Sí | admin |
+| POST | /admin/locations | Sí | admin |
+| PUT | /admin/locations/:id | Sí | admin |
+| DELETE | /admin/locations/:id | Sí | admin |
+| GET | /admin/specialties | Sí | admin |
+| POST | /admin/specialties | Sí | admin |
+| PUT | /admin/specialties/:id | Sí | admin |
+| DELETE | /admin/specialties/:id | Sí | admin |
 
 ---
 
@@ -610,3 +626,249 @@ Aprueba o rechaza una solicitud de renovación.
 | 400 | Esta solicitud ya fue procesada |
 | 403 | No tienes permiso para procesar esta solicitud |
 | 404 | Solicitud no encontrada |
+
+---
+
+## 9. Panel de Administración (`/api/admin`)
+
+Todos los endpoints requieren autenticación y rol `admin`.
+
+### GET /admin/dashboard
+
+Estadísticas generales del sistema.
+
+**Respuesta 200**
+```json
+{
+  "totalAfiliados": 120,
+  "totalMedicos": 8,
+  "totalSedes": 4,
+  "totalEspecialidades": 10,
+  "citasHoy": 25,
+  "citasMes": 310,
+  "citasPendientes": 12,
+  "renovacionesPendientes": 5,
+  "autorizacionesPendientes": 3,
+  "nuevosAfiliados30d": 18,
+  "citasPorEspecialidad": [
+    { "name": "Medicina General", "value": 98 }
+  ],
+  "citasPorMes": [
+    { "mes": "Oct", "citas": 45 }
+  ]
+}
+```
+
+---
+
+### GET /admin/users
+
+Lista todos los usuarios con filtros opcionales.
+
+**Query params**
+| Param | Tipo | Descripción |
+|---|---|---|
+| `role` | string | Filtra por rol (`paciente`, `medico`, `admin`) |
+| `search` | string | Busca por nombre, cédula o email |
+| `activo` | string | `"true"` o `"false"` |
+
+**Respuesta 200** — array de usuarios sin `password_hash`, ordenados por `fecha_registro` descendente.
+
+---
+
+### PATCH /admin/users/:id/toggle-active
+
+Activa o desactiva una cuenta de usuario. No se puede aplicar sobre la propia cuenta del admin.
+
+**Respuesta 200**
+```json
+{ "success": true, "user": { ...usuarioActualizado } }
+```
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 400 | No puedes desactivar tu propia cuenta |
+| 404 | Usuario no encontrado |
+
+---
+
+### PATCH /admin/users/:id/change-role
+
+Cambia el rol de un usuario. No se puede aplicar sobre la propia cuenta del admin.
+
+**Body**
+```json
+{ "role": "medico", "medicoId": "doc-1" }
+```
+> `medicoId` es requerido cuando `role` es `"medico"` y debe corresponder a un médico sin cuenta vinculada.
+
+**Respuesta 200**
+```json
+{ "success": true, "user": { ...usuarioActualizado } }
+```
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 400 | No puedes cambiar tu propio rol |
+| 400 | medicoId es requerido cuando el rol es medico |
+| 400 | Este médico ya tiene una cuenta vinculada |
+| 404 | Usuario no encontrado |
+
+---
+
+### GET /admin/doctors
+
+Devuelve todos los médicos del sistema.
+
+**Respuesta 200** — array de médicos con especialidad, sedes, experiencia, rating y referencia a cuenta de usuario.
+
+---
+
+### POST /admin/doctors
+
+Crea un nuevo médico y genera disponibilidad por defecto (lunes a viernes).
+
+**Body**
+```json
+{
+  "nombre": "Dr. Nombre Apellido",
+  "especialidad_id": "spec-uuid",
+  "sedes": ["sede-uuid-1", "sede-uuid-2"],
+  "experiencia": 10,
+  "rating": 4.8
+}
+```
+
+**Respuesta 201** — objeto del médico creado.
+
+---
+
+### PUT /admin/doctors/:id
+
+Actualiza los datos de un médico.
+
+**Body** — mismos campos que POST, todos opcionales.
+
+**Respuesta 200** — médico actualizado.
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 404 | Médico no encontrado |
+
+---
+
+### DELETE /admin/doctors/:id
+
+Elimina un médico. Bloqueado si tiene citas futuras activas.
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 400 | No se puede eliminar: el médico tiene N cita(s) futura(s) activa(s) |
+| 404 | Médico no encontrado |
+
+---
+
+### GET /admin/locations
+
+Devuelve todas las sedes.
+
+**Respuesta 200** — array de sedes con dirección, teléfono, horario y coordenadas opcionales.
+
+---
+
+### POST /admin/locations
+
+Crea una nueva sede.
+
+**Body**
+```json
+{
+  "nombre": "Sede Norte",
+  "direccion": "Calle 100 #15-20, Bogotá",
+  "telefono": "601-123-4567",
+  "horario": "Lun-Vie 6:00-20:00",
+  "lat": 4.6836,
+  "lng": -74.0479
+}
+```
+
+**Respuesta 201** — objeto de la sede creada.
+
+---
+
+### PUT /admin/locations/:id
+
+Actualiza una sede existente.
+
+**Respuesta 200** — sede actualizada.
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 404 | Sede no encontrada |
+
+---
+
+### DELETE /admin/locations/:id
+
+Elimina una sede. Bloqueado si algún médico tiene esa sede asignada.
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 400 | No se puede eliminar: N médico(s) tienen esta sede asignada |
+| 404 | Sede no encontrada |
+
+---
+
+### GET /admin/specialties
+
+Devuelve todas las especialidades.
+
+**Respuesta 200** — array con `id`, `nombre`, `icono` y `descripcion`.
+
+---
+
+### POST /admin/specialties
+
+Crea una nueva especialidad.
+
+**Body**
+```json
+{
+  "nombre": "Neurología",
+  "icono": "Brain",
+  "descripcion": "Diagnóstico y tratamiento del sistema nervioso"
+}
+```
+
+**Respuesta 201** — especialidad creada.
+
+---
+
+### PUT /admin/specialties/:id
+
+Actualiza una especialidad existente.
+
+**Respuesta 200** — especialidad actualizada.
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 404 | Especialidad no encontrada |
+
+---
+
+### DELETE /admin/specialties/:id
+
+Elimina una especialidad. Bloqueado si algún médico la tiene asignada.
+
+**Errores**
+| Código | Mensaje |
+|---|---|
+| 400 | No se puede eliminar: N médico(s) tienen esta especialidad asignada |
+| 404 | Especialidad no encontrada |

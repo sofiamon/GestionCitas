@@ -118,6 +118,7 @@ El frontend queda disponible en `http://localhost:5173`.
 | Médico — Dr. Jorge Sánchez (Odontología) | `1000100006` | `Password123!` |
 | Médico — Dra. Patricia Gómez (Oftalmología) | `1000100007` | `Password123!` |
 | Médico — Dr. Andrés Ramírez (Psicología) | `1000100008` | `Password123!` |
+| Administrador | `9999999999` | `Password123!` |
 
 ---
 
@@ -149,6 +150,7 @@ EPSV1/
     ├── data/                        # Datos estáticos de catálogos
     ├── hooks/                       # Custom hooks
     ├── pages/
+    │   ├── admin/                   # Panel de administración
     │   ├── medico/                  # Portal médico
     │   └── *.jsx                    # Páginas del portal paciente
     ├── services/
@@ -173,6 +175,7 @@ EPSV1/
 | Modo oscuro | Completo |
 | Notificaciones por email | Completo (configurable) |
 | Tests backend | Completo |
+| Panel de administración (usuarios, médicos, sedes, especialidades) | Completo |
 
 ### Próximos pasos
 
@@ -180,7 +183,6 @@ EPSV1/
 - [ ] Subida de foto de perfil real (almacenamiento en S3 o similar)
 - [ ] Notificaciones push para recordatorio de citas
 - [ ] Versión móvil nativa (React Native)
-- [ ] Panel de administración para gestión de médicos y sedes
 
 ---
 

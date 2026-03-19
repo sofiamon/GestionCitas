@@ -20,6 +20,11 @@ export const ROUTES = {
   MEDICO_APPOINTMENTS: '/medico/appointments',
   MEDICO_RENEWALS: '/medico/renewals',
   MEDICO_AUTHORIZATIONS: '/medico/authorizations',
+  ADMIN_DASHBOARD: '/admin/dashboard',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_DOCTORS: '/admin/doctors',
+  ADMIN_LOCATIONS: '/admin/locations',
+  ADMIN_SPECIALTIES: '/admin/specialties',
 };
 
 export const APPOINTMENT_STATES = {

@@ -164,4 +164,33 @@ export const api = {
     const qs = params.toString();
     return request('GET', `/health-metrics/patient/${userId}${qs ? `?${qs}` : ''}`);
   },
+
+  // Admin
+  getAdminDashboard: () => request('GET', '/admin/dashboard'),
+
+  getAdminUsers: (role, search, activo) => {
+    const params = new URLSearchParams();
+    if (role) params.set('role', role);
+    if (search) params.set('search', search);
+    if (activo !== undefined) params.set('activo', activo);
+    const qs = params.toString();
+    return request('GET', `/admin/users${qs ? `?${qs}` : ''}`);
+  },
+  toggleUserActive: (id) => request('PATCH', `/admin/users/${id}/toggle-active`),
+  changeUserRole: (id, role, medicoId) => request('PATCH', `/admin/users/${id}/change-role`, { role, medicoId }),
+
+  getAdminDoctors: () => request('GET', '/admin/doctors'),
+  createDoctor: (data) => request('POST', '/admin/doctors', data),
+  updateDoctor: (id, data) => request('PUT', `/admin/doctors/${id}`, data),
+  deleteDoctor: (id) => request('DELETE', `/admin/doctors/${id}`),
+
+  getAdminLocations: () => request('GET', '/admin/locations'),
+  createLocation: (data) => request('POST', '/admin/locations', data),
+  updateLocation: (id, data) => request('PUT', `/admin/locations/${id}`, data),
+  deleteLocation: (id) => request('DELETE', `/admin/locations/${id}`),
+
+  getAdminSpecialties: () => request('GET', '/admin/specialties'),
+  createSpecialty: (data) => request('POST', '/admin/specialties', data),
+  updateSpecialty: (id, data) => request('PUT', `/admin/specialties/${id}`, data),
+  deleteSpecialty: (id) => request('DELETE', `/admin/specialties/${id}`),
 };

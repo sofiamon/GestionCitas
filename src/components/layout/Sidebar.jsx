@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Home, Calendar, CalendarPlus, FileText, Pill, User,
   HelpCircle, LogOut, HeartPulse, X, AlertTriangle, Sun, Moon,
-  RefreshCw, FileCheck, Download
+  RefreshCw, FileCheck, Download, Users, Building, Layers, Stethoscope
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -25,6 +25,17 @@ const pacienteMenu = [
   { icon: HelpCircle, label: 'Ayuda', path: ROUTES.HELP },
 ];
 
+const adminMenu = [
+  { icon: Home, label: 'Dashboard', path: ROUTES.ADMIN_DASHBOARD },
+  { icon: Users, label: 'Usuarios', path: ROUTES.ADMIN_USERS },
+  { icon: Stethoscope, label: 'Médicos', path: ROUTES.ADMIN_DOCTORS },
+  { icon: Building, label: 'Sedes', path: ROUTES.ADMIN_LOCATIONS },
+  { icon: Layers, label: 'Especialidades', path: ROUTES.ADMIN_SPECIALTIES },
+  { icon: User, label: 'Mi Perfil', path: ROUTES.PROFILE },
+  { divider: true },
+  { icon: HelpCircle, label: 'Ayuda', path: ROUTES.HELP },
+];
+
 const medicoMenu = [
   { icon: Home, label: 'Inicio', path: ROUTES.MEDICO_DASHBOARD },
   { icon: Calendar, label: 'Mis Consultas', path: ROUTES.MEDICO_APPOINTMENTS },
@@ -41,8 +52,8 @@ const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const menuItems = user?.role === 'medico' ? medicoMenu : pacienteMenu;
-  const portalLabel = user?.role === 'medico' ? 'Portal del Médico' : 'Portal del Afiliado';
+  const menuItems = user?.role === 'admin' ? adminMenu : user?.role === 'medico' ? medicoMenu : pacienteMenu;
+  const portalLabel = user?.role === 'admin' ? 'Panel de Administración' : user?.role === 'medico' ? 'Portal del Médico' : 'Portal del Afiliado';
 
   const handleLogoutConfirm = () => {
     setShowLogoutModal(false);
@@ -149,7 +160,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="flex-1 min-w-0">
               <p className={`text-sm font-medium truncate ${t.text}`}>{user?.nombreCompleto || 'Usuario'}</p>
               <p className={`text-xs truncate ${t.muted}`}>
-                {user?.role === 'medico' ? 'Médico' : `CC ${user?.cedula}`}
+                {user?.role === 'admin' ? 'Administrador' : user?.role === 'medico' ? 'Médico' : `CC ${user?.cedula}`}
               </p>
             </div>
           </div>

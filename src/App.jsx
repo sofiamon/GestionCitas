@@ -28,12 +28,19 @@ const TermsPage        = React.lazy(() => import('./pages/TermsPage'));
 const PrivacyPage      = React.lazy(() => import('./pages/PrivacyPage'));
 const CertificatesPage    = React.lazy(() => import('./pages/CertificatesPage'));
 const HealthDashboardPage = React.lazy(() => import('./pages/HealthDashboardPage'));
+const AdminDashboardPage  = React.lazy(() => import('./pages/admin/AdminDashboardPage'));
+const AdminUsersPage      = React.lazy(() => import('./pages/admin/AdminUsersPage'));
+const AdminDoctorsPage    = React.lazy(() => import('./pages/admin/AdminDoctorsPage'));
+const AdminLocationsPage  = React.lazy(() => import('./pages/admin/AdminLocationsPage'));
+const AdminSpecialtiesPage = React.lazy(() => import('./pages/admin/AdminSpecialtiesPage'));
 
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
   if (isLoading) return <PageSpinner />;
   if (isAuthenticated) {
-    return <Navigate to={user?.role === 'medico' ? ROUTES.MEDICO_DASHBOARD : ROUTES.DASHBOARD} replace />;
+    if (user?.role === 'admin') return <Navigate to={ROUTES.ADMIN_DASHBOARD} replace />;
+    if (user?.role === 'medico') return <Navigate to={ROUTES.MEDICO_DASHBOARD} replace />;
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
   return children;
 };
@@ -51,6 +58,14 @@ const MedicoRoute = ({ children }) => {
   if (isLoading) return <PageSpinner />;
   if (!isAuthenticated) return <Navigate to={ROUTES.LOGIN} replace />;
   if (user?.role !== 'medico') return <Navigate to={ROUTES.DASHBOARD} replace />;
+  return children;
+};
+
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  if (isLoading) return <PageSpinner />;
+  if (!isAuthenticated) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (user?.role !== 'admin') return <Navigate to={ROUTES.DASHBOARD} replace />;
   return children;
 };
 
@@ -98,6 +113,23 @@ const AppRoutes = () => {
         <Route path={ROUTES.MEDICO_AUTHORIZATIONS} element={<MedicoAuthorizationsPage />} />
         <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTES.HELP} element={<HelpPage />} />
+      </Route>
+
+      {/* Admin routes */}
+      <Route
+        element={
+          <AdminRoute>
+            <MainLayout />
+          </AdminRoute>
+        }
+      >
+        <Route path={ROUTES.ADMIN_DASHBOARD}  element={<Suspense fallback={<PageSpinner />}><AdminDashboardPage /></Suspense>} />
+        <Route path={ROUTES.ADMIN_USERS}      element={<Suspense fallback={<PageSpinner />}><AdminUsersPage /></Suspense>} />
+        <Route path={ROUTES.ADMIN_DOCTORS}    element={<Suspense fallback={<PageSpinner />}><AdminDoctorsPage /></Suspense>} />
+        <Route path={ROUTES.ADMIN_LOCATIONS}  element={<Suspense fallback={<PageSpinner />}><AdminLocationsPage /></Suspense>} />
+        <Route path={ROUTES.ADMIN_SPECIALTIES} element={<Suspense fallback={<PageSpinner />}><AdminSpecialtiesPage /></Suspense>} />
+        <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+        <Route path={ROUTES.HELP}    element={<HelpPage />} />
       </Route>
 
       {/* Landing, legal & fallback */}
