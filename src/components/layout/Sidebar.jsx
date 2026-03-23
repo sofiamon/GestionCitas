@@ -154,8 +154,11 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* User section */}
         <div className={`p-4 border-t ${t.bottomBorder}`}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-sm font-bold text-white">
-              {getInitials(user?.nombreCompleto)}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-sm font-bold text-white overflow-hidden relative flex-shrink-0">
+              {user?.foto
+                ? <img src={user.foto} alt="Foto de perfil" className="absolute inset-0 w-full h-full object-cover" />
+                : getInitials(user?.nombreCompleto)
+              }
             </div>
             <div className="flex-1 min-w-0">
               <p className={`text-sm font-medium truncate ${t.text}`}>{user?.nombreCompleto || 'Usuario'}</p>

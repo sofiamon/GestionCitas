@@ -125,9 +125,9 @@ const ProfilePage = () => {
       <Card className="text-center overflow-hidden">
         <div className="h-24 gradient-primary rounded-t-2xl -mx-6 -mt-6 mb-0 relative" />
         <div className="relative -mt-12 mb-4 w-24 mx-auto">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-2xl font-bold text-white shadow-lg border-4 border-white overflow-hidden">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-2xl font-bold text-white shadow-lg border-4 border-white overflow-hidden relative">
             {user?.foto
-              ? <img src={user.foto} alt="Foto de perfil" className="w-full h-full object-cover" />
+              ? <img src={user.foto} alt="Foto de perfil" className="absolute inset-0 w-full h-full object-cover" />
               : getInitials(user?.nombreCompleto)
             }
           </div>

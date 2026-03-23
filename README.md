@@ -1,6 +1,6 @@
 # EPS Portal del Afiliado
 
-Portal web para afiliados y médicos de una EPS (Entidad Promotora de Salud) colombiana. Permite agendar citas, consultar historial médico, gestionar medicamentos con tracking de dosis y renovar recetas, todo desde una interfaz moderna con soporte de modo oscuro.
+Portal web completo para afiliados, médicos y administradores de una EPS (Entidad Promotora de Salud) colombiana. Permite agendar citas, consultar historial médico, gestionar medicamentos con tracking de dosis, renovar recetas, gestionar autorizaciones médicas y descargar certificados, todo desde una interfaz moderna con soporte de modo oscuro y asistente virtual integrado.
 
 ---
 
@@ -33,6 +33,14 @@ Portal web para afiliados y médicos de una EPS (Entidad Promotora de Salud) col
 | bcryptjs | 2.4 |
 | Nodemailer | 8 |
 | Winston | 3 |
+| node-cron | 4 |
+| Recharts | 3 |
+
+**Librerías adicionales frontend**
+| Librería | Uso |
+|---|---|
+| Recharts | Gráficas del dashboard de salud |
+| jsPDF + jspdf-autotable | Generación de certificados en PDF |
 
 **Base de datos:** archivo `backend/data/db.json` (JSON persistido en disco con backups automáticos)
 
@@ -72,7 +80,21 @@ PORT=3001
 JWT_SECRET=cambia-esto-por-un-secreto-largo-y-aleatorio
 ```
 
-Las variables de email son opcionales en desarrollo — si no se configuran, se usa [Ethereal](https://ethereal.email/) como bandeja de prueba.
+Variables opcionales:
+
+```env
+# Email (si no se configuran, se usa Ethereal como bandeja de prueba en desarrollo)
+SMTP_HOST=smtp.tuproveedor.com
+SMTP_PORT=587
+SMTP_USER=tu-usuario
+SMTP_PASS=tu-contraseña
+EMAIL_FROM=noreply@eps.com
+
+# Asistente virtual (ChatWidget)
+ANTHROPIC_API_KEY=tu-api-key-aqui
+```
+
+Las variables de email son opcionales en desarrollo — si no se configuran, se usa [Ethereal](https://ethereal.email/) como bandeja de prueba. El asistente virtual funciona con respuestas locales (FAQ) aunque no se configure la API key.
 
 Inicia el servidor:
 
@@ -140,6 +162,7 @@ EPSV1/
     │   ├── features/                # Componentes por dominio
     │   │   ├── appointments/        # Citas médicas
     │   │   ├── auth/                # Login, registro
+    │   │   ├── chat/                # ChatWidget (asistente virtual)
     │   │   ├── dashboard/           # Widgets del dashboard
     │   │   ├── medications/         # Medicamentos y dosis
     │   │   ├── medical_history/     # Historial médico
@@ -164,18 +187,23 @@ EPSV1/
 
 | Módulo | Estado |
 |---|---|
-| Autenticación (login, registro, recuperación de contraseña) | Completo |
+| Autenticación con validación por portal (paciente / médico / admin) | Completo |
 | Dashboard del paciente | Completo |
 | Agendar, cancelar y reagendar citas | Completo |
 | Historial médico | Completo |
 | Medicamentos con tracking de dosis | Completo |
 | Renovación de recetas | Completo |
-| Portal médico (agenda, renovaciones) | Completo |
-| Perfil del afiliado | Completo |
+| Autorizaciones médicas | Completo |
+| Certificados y descarga de PDFs | Completo |
+| Dashboard de salud (signos vitales) | Completo |
+| Portal médico (agenda, renovaciones, autorizaciones) | Completo |
+| Panel de administración (usuarios, médicos, sedes, especialidades) | Completo |
+| Perfil del afiliado con preferencias de recordatorios | Completo |
+| Recordatorios de medicamentos por email (scheduler automático) | Completo |
+| Asistente virtual (ChatWidget con FAQ + Claude API) | Completo |
 | Modo oscuro | Completo |
 | Notificaciones por email | Completo (configurable) |
 | Tests backend | Completo |
-| Panel de administración (usuarios, médicos, sedes, especialidades) | Completo |
 
 ### Próximos pasos
 

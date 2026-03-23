@@ -9,7 +9,7 @@ const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({ origin: /^http:\/\/localhost:\d+$/, credentials: true }));
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '2mb' }));
 
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
